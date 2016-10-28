@@ -1,4 +1,3 @@
-
 package ge.mziuri.daotest.dao;
 
 import ge.mziuri.daotest.exception.DaoTestException;
@@ -14,15 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CityDAOImpl implements CityDAO {
-    
+
     private Connection con;
-    
+
     private PreparedStatement pstmt;
-    
+
     public CityDAOImpl() {
         try {
-        Class.forName("org.postgresql.Driver");
-        con = DriverManager.getConnection(DatabaseMetaInfo.databaseURL, DatabaseMetaInfo.username, DatabaseMetaInfo.passsword);
+            Class.forName("org.postgresql.Driver");
+            con = DriverManager.getConnection(DatabaseMetaInfo.databaseURL, DatabaseMetaInfo.username, DatabaseMetaInfo.passsword);
         } catch (ClassNotFoundException | SQLException ex) {
             System.out.println(ex.getMessage());
         }
@@ -67,7 +66,7 @@ public class CityDAOImpl implements CityDAO {
                 int country_id = rs.getInt("country_id");
                 City city = new City(id, cityName, population, capital, country_id);
                 cities.add(city);
-            } 
+            }
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
@@ -77,7 +76,7 @@ public class CityDAOImpl implements CityDAO {
     @Override
     public City getCityInCountry(String countryName, String cityName) throws DaoTestException {
         City city = null;
-        try { 
+        try {
             pstmt = con.prepareCall("SELECT * FROM city WHERE name = ? AND country_id = (SELECT id FROM country WHERE name = ?);");
             pstmt.setString(1, cityName);
             pstmt.setString(2, countryName);
@@ -111,7 +110,7 @@ public class CityDAOImpl implements CityDAO {
                 int country_id = rs.getInt("country_id");
                 City city = new City(id, cityName, population, capital, country_id);
                 cities.add(city);
-            } 
+            }
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
@@ -133,13 +132,46 @@ public class CityDAOImpl implements CityDAO {
                 int country_id = rs.getInt("country_id");
                 City city = new City(id, cityName, population, capital, country_id);
                 cities.add(city);
-            } 
+            }
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
         return cities;
     }
-    
+
+    @Override
+    public List<City> getAllCityByPopulationAscending() {
+
+        List<City> cities = new ArrayList<>();
+
+        try {
+
+            pstmt = con.prepareStatement("SELECT * FROM city ORDER BY population ASC");
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+
+                int id = rs.getInt("id");
+                String cityName = rs.getString("name");
+                long population = rs.getLong("population");
+                boolean capital = rs.getBoolean("capital");
+                int country_id = rs.getInt("country_id");
+                City city = new City(id, cityName, population, capital, country_id);
+                cities.add(city);
+
+            }
+
+        } catch (SQLException ex) {
+
+            System.out.println(ex.getMessage());
+
+        }
+
+        return cities;
+
+    }
+
     @Override
     public void closeConnection() {
         try {
@@ -149,5 +181,5 @@ public class CityDAOImpl implements CityDAO {
             System.out.println(ex.getMessage());
         }
     }
-    
+
 }
