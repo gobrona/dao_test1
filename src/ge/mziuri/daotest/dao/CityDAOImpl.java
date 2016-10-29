@@ -149,5 +149,31 @@ public class CityDAOImpl implements CityDAO {
             System.out.println(ex.getMessage());
         }
     }
+
+    @Override
+    public Integer getCityNum() {
+        List<City> cities = new ArrayList<>();
+        
+        try {
+            pstmt = con.prepareStatement("SELECT * FROM city");
+            
+           ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+               int id = rs.getInt("id");
+                String cityName = rs.getString("name");
+                long population = rs.getLong("population");
+                boolean capital = rs.getBoolean("capital");
+                int country_id = rs.getInt("country_id");
+                City city = new City(id, cityName, population, capital, country_id);
+                cities.add(city);
+                
+        
+            } 
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+       return cities.size();
+        //return n;
+    }
     
 }

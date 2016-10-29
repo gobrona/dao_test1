@@ -18,6 +18,8 @@ public interface CityDAO {
     List<City> getAllCity();
     
     List<City> getAllCityInCountry(String countryName);
+     
+    Integer getCityNum ();
     
     void closeConnection();
     
